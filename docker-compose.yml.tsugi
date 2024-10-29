@@ -1,0 +1,74 @@
+version: "3.7"
+
+services:
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8008:8000"
+    restart: always
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=False
+    volumes:
+      - ./db:/chroma/chroma/
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.1.125
+    environment:
+      OPENAI_API_BASE_URL: "http://mockai:5002/v1"
+      OPENAI_API_KEY: "xxxx"
+      LTI_SECRET: "pepino"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../open-webui/backend:/app/backend
+    restart: always
+
+  mockai:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - ./mockai:/app
+    command: /bin/sh -c "npm install --include=dev && npm run dev"
+    ports:
+      - "5002:5002"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      CHROMADB_HOST: ${CHROMADB_HOST}
+      SERVER_PORT: 5002
+      DEBUG: ${DEBUG}
+      ADMIN_API_KEY: ${ADMIN_API_KEY}
+      BASE_URL: http://localhost:5002/uploads # 
+      MAX_TURNS: ${MAX_TURNS}
+    restart: always
+
+  db:
+    container_name: tsugi_db
+    image: mariadb:10.5
+    environment:
+      MYSQL_ROOT_PASSWORD: tsugi_root_pw
+      MYSQL_DATABASE: tsugi
+      MYSQL_USER: ltiuser
+      MYSQL_PASSWORD: ltipassword
+    ports:
+      - "33306:3306"
+    volumes:
+      - ../tsugi/.docker_data/mysql:/var/lib/mysql:delegated
+
+  web:
+    container_name: tsugi_web
+    build:
+      context: ../tsugi
+    environment:
+      OPEN_WEBUI_URL: "http://open-webui:8080"
+      LTI_SECRET: "pepino"
+      WEBUI_HTML_BASE: "http://127.0.0.1:8080" 
+    depends_on:
+      - db
+    volumes:
+      - ../tsugi:/var/www/html/tsugi:delegated
+    ports:
+      - "8888:80"
+    command: bash -c "./tsugi/docker-compose-init.sh"
+    stdin_open: true
+    tty: true

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Create New User</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
+
+      h1 {
+        color: #333;
+      }
+
+      form {
+        margin-top: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+        font-weight: bold;
+      }
+
+      input[type="text"] {
+        width: 300px;
+        padding: 5px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+      
+    </style>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="sidebar"><%- include('sidebar') %></div>
+    <div class="content">
+      <h1>Create New User</h1>
+      <form id="userForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required />
+
+        <div class="button-container">
+          <button type="submit">Create User</button>
+        </div>
+      </form>
+
+      <div id="usersTableContainer">
+        <h2>Existing Users</h2>
+        <table id="usersTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody">
+            <!-- Rows will be added here dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="message-popup" id="messagePopup"></div>
+
+    <script>
+    
+      document.addEventListener("DOMContentLoaded", function () {
+        
+        document
+          .getElementById("userForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            const name = document.getElementById("name").value;
+            const password = document.getElementById("password").value;
+            
+
+            const userData = {
+              name: name,
+              password: password,
+            };
+
+            try {
+              // show a message that the documents are being ingested and delete it after either success or failure
+              const messagePopup = document.getElementById("messagePopup");
+              messagePopup.textContent = "User creation in progress...";
+              messagePopup.style.display = "block";
+
+              setTimeout(() => {
+                messagePopup.textContent = "";
+                messagePopup.style.display = "none";
+              }, 500);
+
+              fetch("/v1/users", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(userData),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log(data.message);
+                    populateUsersTable(); // Refresh the users table
+                })
+                .catch((error) => {
+                  console.error("Error:", error);
+                });
+            } catch (error) {
+              showMessage(`Error: ${error.message}`, true);
+            }
+          });
+      });
+
+      function populateUsersTable() {
+        fetch("/v1/users")
+          .then((response) => response.json())
+          .then((usersData) => {
+            const tableBody = document.getElementById("usersTableBody");
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            usersData.forEach((user) => {
+              const row = tableBody.insertRow();
+              const nameCell = row.insertCell();
+              const removeCell = row.insertCell();
+
+              nameCell.textContent = user.name;
+
+              const removeButton = document.createElement("button");
+              removeButton.type = "button";
+              removeButton.textContent = "❌";
+              
+
+              removeButton.addEventListener("click", () => {
+                deleteUser(user.id);
+              });
+              removeCell.appendChild(removeButton);
+            });
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      function deleteUser(userId) {
+        fetch(`/v1/users/${userId}`, {
+          method: "DELETE",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data.message);
+            populateUsersTable(); // Refresh the users table
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        populateUsersTable();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Library File Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="sidebar">
+        <%- include('sidebar') %>
+    </div>
+    <div class="content">
+        <h1>Select a Library</h1>
+        <select id="librarySelect" onchange="fetchFiles(this.value)">
+            <option value="">--Select a Library--</option>
+        </select>
+
+        <h2>Files in the Library</h2>
+        <table id="fileTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Resource Link</th>
+                    <th>JSON Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Files will be inserted here -->
+            </tbody>
+        </table>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                fetchLibraries();
+            });
+
+            async function fetchLibraries() {
+                try {
+                    const response = await fetch('/util/libraries');
+                    const data = await response.json();
+                    const librarySelect = document.getElementById('librarySelect');
+                    data.libraries.forEach(lib => {
+                        const option = new Option(lib, lib);
+                        librarySelect.appendChild(option);
+                    });
+                } catch (error) {
+                    console.error("Error fetching libraries:", error);
+                }
+            }
+
+            async function fetchFiles(libraryName) {
+                if (!libraryName) {
+                    document.getElementById('fileTable').querySelector('tbody').innerHTML = '';
+                    return; // Don't fetch if no library is selected
+                }
+                try {
+                    const response = await fetch(`/util/library-files/${libraryName}`);
+                    const data = await response.json();
+                    const tbody = document.getElementById('fileTable').querySelector('tbody');
+                    tbody.innerHTML = ''; // Clear existing rows
+
+                    // We expect 'data' to be an object with nested objects, each representing a file
+                    Object.entries(data).forEach(([key, file]) => {
+                        const tr = document.createElement('tr');
+
+                        let fileType = '';
+                        let fileUrl = '';
+                        let jsonUrl = '';
+
+                        if (file.pdf) {
+                            fileType = 'pdf';
+                            fileUrl = file.pdf.url;
+                            jsonUrl = file.json ? file.json.url : '#';
+                        }
+                        else if (file.sbv) {
+                            fileType = 'sbv';
+                            fileUrl = file.sbv.url;
+                            jsonUrl = file.json ? file.json.url : '#';
+                        }
+
+                        tr.innerHTML = `<td>${key}</td>  
+                    <td><a href="${fileUrl}" target="_blank">View ${fileType.toUpperCase()}</a></td>
+                    <td><a href="${jsonUrl}" target="_blank">Download JSON</a></td>`;
+                        tbody.appendChild(tr);
+                    });
+
+                } catch (error) {
+                    console.error('Failed to fetch files:', error);
+                    const tbody = document.getElementById('fileTable').querySelector('tbody');
+                    tbody.innerHTML = '<tr><td colspan="3">Failed to load files.</td></tr>';
+                }
+            }
+        </script>
+    </div>
+</body>
+
+</html>

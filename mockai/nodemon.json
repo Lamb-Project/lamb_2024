@@ -1,0 +1,5 @@
+{
+    "ignore": ["uploads/**/*", "public/uploads/**/*"],
+    "watch": ["openAI/**/*", "./*", "public/*"],
+    "ext": "js,json"
+}

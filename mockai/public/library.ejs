@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+        <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+    <div class="sidebar">
+        <%- include('sidebar') %>
+    </div>
+
+    <div class="content">
+    <h1>Library Manager</h1>
+
+    <h2>Available Libraries</h2>
+    <button onclick="listLibraries()">Refresh Library List</button>
+    <ul id="libraryList"></ul>
+
+    <h2>Manage Library Files</h2>
+    <select id="selectedLibrary">
+        <option value="">Select a Library</option>
+    </select>
+    <input type="text" id="titleToDelete" placeholder="Enter title to delete">
+    <button onclick="deleteFile()">Delete File</button>
+
+    </div>
+
+    <script>
+        function listLibraries() {
+            axios.get('/util/libraries')
+                .then(function (response) {
+                    const libraryList = document.getElementById('libraryList');
+                    const selectedLibrary = document.getElementById('selectedLibrary');
+                    libraryList.innerHTML = '';
+                    selectedLibrary.innerHTML = '<option value="">Select a Library</option>';
+
+                    response.data.libraries.forEach(function (library) {
+                        const li = document.createElement('li');
+                        li.textContent = library;
+                        libraryList.appendChild(li);
+
+                        const option = document.createElement('option');
+                        option.value = library;
+                        option.textContent = library;
+                        selectedLibrary.appendChild(option);
+                    });
+                })
+                .catch(function (error) {
+                    console.error('Error fetching libraries:', error);
+                });
+        }
+
+        function deleteFile() {
+            const libraryName = document.getElementById('selectedLibrary').value;
+            const titleToDelete = document.getElementById('titleToDelete').value;
+
+            if (!libraryName || !titleToDelete) {
+                alert('Please select a library and enter a title.');
+                return;
+            }
+
+            axios.delete(`/util/library/${libraryName}`, { data: { title: titleToDelete } })
+                .then(function (response) {
+                    alert('File deleted successfully: ' + response.data.message);
+                    document.getElementById('titleToDelete').value = ''; // Clear input after deletion
+                })
+                .catch(function (error) {
+                    console.error('Error deleting file:', error);
+                    alert('Failed to delete file: ' + (error.response.data || 'Server error'));
+                });
+        }
+
+        // Initial load of libraries
+        listLibraries();
+    </script>
+</body>
+</html>

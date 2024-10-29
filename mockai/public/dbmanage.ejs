@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChromaDB Frontend</title>
+  <link rel="stylesheet" href="/styles.css" />
+
+</head>
+
+<body>
+  <div class="sidebar">
+    <%- include('sidebar') %>
+  </div>
+
+  <div class="content">
+    <div id="modelForm">
+      <h2>DB Manage</h2>
+
+      <div class="form-group">
+        <label for="collection">Collections</label>
+        <select id="collection" name="collection" required></select>
+        <div>
+          How Many: <input type="text" id="howmany" name="howmany" required value="10" />
+        </div>
+      </div>
+      
+      <span class="button-container"><button id="peekButton">Peek</button></span>
+      
+        <button id="deleteButton" class="button-container-red">Delete</button>
+      
+    </div>
+    <div class="message" id="peek"></div>
+
+    <div class="message" id="message"></div>
+  </div>
+
+  <script src="script-dbmanage.js"></script>
+</body>
+
+</html>

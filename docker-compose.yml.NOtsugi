@@ -1,0 +1,45 @@
+version: "3.7"
+
+services:
+  chroma:
+    image: ghcr.io/chroma-core/chroma:latest
+    ports:
+      - "8008:8000"
+    restart: always
+    environment:
+      - IS_PERSISTENT=TRUE
+      - ANONYMIZED_TELEMETRY=False
+    volumes:
+      # Default configuration for persist_directory in chromadb/config.py
+      # Currently it's located in "/chroma/chroma/"
+      - ./db:/chroma/chroma/
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:v0.1.125
+    environment:
+      OPENAI_API_BASE_URL: "http://mockai:5002/v1"
+      OPENAI_API_KEY: "xxxx"
+    ports:
+      - "8080:8080" # Assuming the Web UI runs on port 80, adjust if needed
+    volumes:
+      - ../open-webui/backend:/app/backend
+    restart: always
+
+  mockai:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - ./mockai:/app
+    command: /bin/sh -c "npm install --include=dev && npm run dev"
+    ports:
+      - "5002:5002"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      CHROMADB_HOST: ${CHROMADB_HOST}
+      SERVER_PORT: 5002
+      DEBUG: ${DEBUG}
+      ADMIN_API_KEY: ${ADMIN_API_KEY}
+      BASE_URL: http://localhost:5002/uploads # 
+      MAX_TURNS: ${MAX_TURNS}
+    restart: always
+

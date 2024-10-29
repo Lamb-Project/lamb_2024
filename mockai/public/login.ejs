@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        /* same styles as library.ejs */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .flash-message {
+            color: red;
+            margin-top: 10px;
+        }
+
+    </style>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <div class="sidebar">
+        <%- include('sidebar') %>
+    </div>
+
+    <div class="content">
+        <h1>Login</h1>
+        
+        <!-- Add this block to show flash messages -->
+        <% if (message) { %>
+            <div class="flash-message">
+                <%= message %> 
+            </div>
+        <% } %>
+
+        <form action="/login" method="post">
+            <h2>Login Credentials</h2>
+            <label for="name">Username:</label>
+            <input type="text" id="name" name="name"><br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password"><br><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        // No JavaScript code needed for this page
+    </script>
+</body>
+</html>

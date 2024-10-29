@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>PDF Upload Form</title>
+
+    <style>
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 300px;
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <div class="sidebar">
+        <%- include('sidebar') %>
+    </div>
+    <div class="content">
+
+        <h1>PDF Upload to library.</h1>
+        <form id="uploadForm" action="/util/pre-ingest" method="post" enctype="multipart/form-data">
+            <div class="form-container">
+
+                <div class="form-group">
+            Document Title:
+            <input type="text" id="title" name="title" required placeholder="Enter document title">
+        </div>
+            <div class="form-group">
+                Library Name:
+                <select id="libraryName" name="libraryName" required>
+                    <option value="">Select a Library</option>
+                </select>
+        
+            </div>
+             <div class="form-group">
+            Keep PDF (PDF File will be made available online)
+            <input type="checkbox" id="keepFile" name="keepFile" checked> 
+        </div>
+        <div class="form-group">
+            Number of pages per Chunk
+            <input type="number" id="pagesPerChunk" name="pagesPerChunk"
+                placeholder="Pages per Chunk (0 for all in one)" min="0" required default="1">
+            </div>
+            <div class="form-group"> 
+            <input type="file" id="pdfFile" name="file" required><br>
+        </div>
+        <div class="form-group">
+            <button type="submit">Upload PDF</button><br>
+        </div>
+        </div>
+
+        </form>
+        <div class="content" id="fileTableContainer" style="margin-top: 20px;"></div>
+
+        <div id="downloadLinks" style="margin-top: 20px;"></div>
+        <div id="messagePopup" class="message-popup" style="display: none"></div>
+    </div>
+    <script src="script-library-management.js"></script>
+
+
+</body>
+
+</html>

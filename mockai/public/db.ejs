@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChromaDB Frontend</title>
+  <link rel="stylesheet" href="/styles.css" />
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+
+    th:nth-child(2),
+    td {
+      max-width: 400px;
+      /* on overflow, wrap */
+      white-space: normal;
+      word-break: break-all;
+
+    }
+  </style>
+
+  <script>
+    
+    function deleteDocument(event) {
+      event.preventDefault();
+
+      if (!confirm('Are you sure you want to delete this document?')) {
+        return false;
+      }
+
+      // Get the collection name and document ID from the form
+      const collectionName = event.target.querySelector('input[name="collection"]').value;
+      const documentId = event.target.querySelector('input[name="id"]').value;
+
+      // Send a DELETE request to the server using fetch API
+      fetch(`/db/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ collection: collectionName, id: documentId }),
+      })
+        .then(res => res.json())
+        .then(data => {
+          // Update the table with the deleted document
+          const table = document.querySelector('table');
+          const row = table.querySelector(`tr[data-id="${documentId}"]`);
+          row.remove();
+        })
+        .catch(error => {
+          console.error('Error deleting document:', error);
+        });
+    }
+  </script>
+</head>
+
+<body>
+  <div class="sidebar">
+    <%- include('sidebar') %>
+  </div>
+
+  <div class="content">
+    <div id="modelForm">
+      <h2>ChromaDB Manager</h2>
+
+      <div class="form-group">
+
+
+        <form action="/db" method="POST">
+          <label for="collection">Select a collection:</label>
+          <select name="collection" id="collection">
+            <% collections.forEach(collection=> { %>
+              <option value="<%= collection.name %>" <%=collection.name===selectedCollection ? 'selected' : '' %>>
+                <%= collection.name %>
+              </option>
+              <% }) %>
+          </select>
+          <button type="submit">Go</button>
+        </form>
+
+        <% if (selectedCollection) { %>
+          <h2>
+            <%= selectedCollection %>
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Metadata</th>
+                <th>Content</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for (let i=0; i < documents.length; i++) { %>
+                <tr data-id="<%= ids[i] %>">
+                  <td>
+                    <%= ids[i] %>
+                  </td>
+                  <td>
+                    <%= JSON.stringify(metadatas[i]) %>
+                  </td>
+                  <td>
+                    <%= JSON.stringify(documents[i]) %>
+                  </td>
+                  <td>
+                    <form action="/db/delete" method="POST" onsubmit="return deleteDocument(event)">
+                      <input type="hidden" name="collection" value="<%= selectedCollection %>" />
+                      <input type="hidden" name="id" value="<%= ids[i] %>" />
+                      <button type="submit">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+                <% } %>
+            </tbody>
+          </table>
+          <% } %>
+
+
+      </div>
+
+
+    </div>
+
+
+    <div class="message" id="message"></div>
+
+  </div>
+
+</body>
+
+</html>

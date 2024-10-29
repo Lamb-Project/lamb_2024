@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChromaDB Frontend</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="sidebar">
+        <%- include('sidebar') %>
+      </div>
+
+    <div class="content">
+
+        <div id="modelForm">
+
+            <h2>Ingest</h2>
+
+            <!-- create input hidden action with value ingest -->
+            <input type="hidden" id="action" name="action" value="ingest">
+
+            <div class="form-group">
+                <label for="collectionName">Collection Name</label>
+                
+                <input list="options" name="collectionName" id="collectionName" required placeholder="Choose or type">
+                <datalist id="options">
+                    <!-- Options here -->
+                </datalist>
+
+            </div>
+            <div class="form-group">
+                <label for="embeddingFunction">Embedding Function</label>
+                <input type="text" id="embeddingFunction" name="embeddingFunction" required value="text-embedding-3-small">
+            </div>
+            <div class="form-group">
+                <label for="document">Documents (ZIP, JSON)</label>
+                <input type="file" id="document" name="document" required accept=".zip,.json">
+            </div>
+            
+            <button onclick="submitForm()">Submit</button>
+        </div>
+
+        <div class="message-popup" id="messagePopup"></div>
+
+    </div>
+
+    <script src="script-ingestion.js"></script>
+</body>
+
+</html>

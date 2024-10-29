@@ -1,0 +1,36 @@
+{
+  "name": "mockai",
+  "version": "1.0.0",
+  "description": "MockAI is a Node.js and Express.js based mock server that simulates the OpenAI Chat API. It supports both single and streaming responses, providing a flexible environment for testing and development.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon --ignore \"**/temp/**\" -x 'node index.js || touch index.js'",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jim",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "chromadb": "^1.8.1",
+    "connect-flash": "^0.1.1",
+    "dotenv": "^16.4.1",
+    "ejs": "^3.1.10",
+    "express": "^4.18.2",
+    "express-session": "^1.18.0",
+    "multer": "^1.4.5-lts.1",
+    "openai": "^4.26.1",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
+    "pdf-lib": "^1.16.0",
+    "pdf-parse": "^1.1.1",
+    "pdf2json": "^1.1.1",
+    "sqlite3": "^5.1.7",
+    "unzipper": "^0.10.14",
+    "uuid": "^9.0.1",
+    "yaml": "^1.10.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}

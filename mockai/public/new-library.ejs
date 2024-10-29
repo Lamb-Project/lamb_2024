@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Library</title>
+    <style>
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+
+
+    <div class="sidebar">
+        <%- include('sidebar') %>
+    </div>
+
+    <div class="content">
+        <h1>Create Library</h1>
+        <form id="createLibraryForm">
+            <label for="libraryName">Library Name:</label>
+            <input type="text" id="libraryName" name="libraryName" required>
+            <button type="submit">Create Library</button>
+        </form>
+        <div id="responseMessage"></div>
+    </div>
+    <script>
+        document.getElementById('createLibraryForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            const libraryName = document.getElementById('libraryName').value;
+
+            fetch('/util/create-library', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ libraryName: libraryName })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('responseMessage').textContent = data.message || JSON.stringify(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('responseMessage').textContent = 'Error creating library.';
+                });
+        });
+    </script>
+</body>
+
+</html>

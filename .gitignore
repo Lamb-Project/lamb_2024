@@ -1,0 +1,16 @@
+.env
+venv/
+db
+chroma.log
+data
+mockai/public/uploads
+mockai/uploads/
+mockai/models.db
+mockai/models.db-journal
+.DS_Store
+testing/
+*.pyc
+.webui_secret_key
+docker-compose.yml
+docker-compose.yml.psa
+open-webui

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add Learning Assistant (LA)</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="script.js"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <%- include('sidebar') %>
+      </div>
+    <div class="content">
+        <form id="modelForm">
+            <h2>Add Learning Assistant</h2>
+            <div class="form-group">
+                <label for="modelID">Learning Assistant ID:</label>
+                <input type="text" id="modelID" name="modelID" required placeholder="A name for the LA"/>
+            </div>
+
+            <div class="form-group">
+                <label for="apiKey">Assistant API Key:</label>
+                <input type="text" id="apiKey" name="apiKey" required placeholder="Enter your Assistant API Key"/>
+            </div>
+
+            <div class="combobox-container">
+                <div class="form-group">
+                    <label for="collection">Collection:</label>
+                    <select id="collection" name="collection" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="vectorDB">Vector DB:</label>
+                    <select id="vectorDB" name="vectorDB" required>
+                        <option value="chromadb">chromadb</option>
+                        <option value="faiss">faiss</option>
+                        <option value="pinecone">pinecone</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="embeddingFunction">Embedding Function:</label>
+                    <select id="embeddingFunction" name="embeddingFunction" required>
+                        <option value="text-embedding-3-small">text-embedding-3-small</option>
+                        <option value="sfr-embedding-mistral">sfr-embedding-mistral</option>
+                        <option value="e5-mistral-7b">e5-mistral-7b</option>
+                        <option value="text-embedding-3-large">text-embedding-3-large</option>
+                    </select>
+                </div>
+            </div>
+            <div class="combobox-container">
+                <div class="form-group-pair">
+                    <div class="form-group">
+                        <label for="augmentation">Augmentation function</label>
+                        <select id="augmentation" name="augmentation" required>
+                            <!-- Options here -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="llm">LLM</label>
+                        <select id="llm" name="llm" required>
+                            <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                            <option value="gpt-4-turbo">gpt-4-turbo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="large-textarea">
+                <div class="form-group">
+                    <label for="promptTemplate">Prompt Template:</label>
+                    <textarea id="promptTemplate" name="promptTemplate" placeholder="{CONTEXT} {QUESTION}"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="systemPrompt">System Prompt:</label>
+                    <textarea id="systemPrompt" name="systemPrompt" placeholder="Always answer in Spanish"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="topK">TopK</label>
+                <input type="number" id="topK" name="topK" required placeholder="Number of results to return"/>
+            </div>
+            <button type="submit" id="addModelButton">Add Model</button>
+        </form>
+
+        <div class="models-table">
+            <h2>Available Models</h2>
+            <table id="modelsTable">
+                <thead>
+                    <tr>
+                        <th>Action</th>
+                        <th>Model ID</th>
+                        <th>Vector DB</th>
+                        <th>Collection</th>
+                        <th>Embedding Function</th>
+                        <th>Prompt Template</th>
+                        <th>System Prompt</th>
+                        <th>TopK</th>
+                        <th>Augmentation</th>
+                        <th>LLM</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Rows will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="messagePopup" class="message-popup" style="display: none"></div>
+</body>
+</html>
