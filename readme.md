@@ -1,3 +1,14 @@
+# about
+
+This is a deprecated version of the LAMB project, a refactoring of the project has been published.
+
+This implementation is described on the paper 
+```
+Alier, M., Pereira, J., García-Peñalvo, F.J., Casañ, M.J. and Cabré, J., 2025. LAMB: An open-source software framework to create artificial intelligence assistants deployed and integrated into learning management systems. Computer Standards & Interfaces, 92, p.103940.
+https://www.sciencedirect.com/science/article/pii/S0920548924001090
+```
+
+
 - **data** -> folder of open webui database and internal workings 
 - **db** -> chromadb folder
 - **mockai** -> Mockai API server
